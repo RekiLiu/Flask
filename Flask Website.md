@@ -1,4 +1,4 @@
-# SQLAlchemy
+。# SQLAlchemy
 
 ### 初始化
 
@@ -91,15 +91,4 @@ return render_template("playlist.html",number = number, keywords = keywords,
         <tbody>
         {% for playlist in playlists %}
         <tr>
-            <td class="text-center">{{ playlist.playlist_id }}</td>
-            <td class="text-center"><a href="{{ playlist.playlist_url }}">{{ playlist.playlist_name }}</a></td>
-            <td class="text-center"><a href="{{url_for('music',playlist_id= playlist.playlist_id)}}">获取音乐</a></td>
-        </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-    <nav style="text-align:center" >
-    <div class="page-footer">{{ render_pagination(pagination_original) }}</div>
-    </nav>
-</div>
-```
+            <td class="text-center">{{ playlist.playlist_id }}</td
