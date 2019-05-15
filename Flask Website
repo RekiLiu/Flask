@@ -1,0 +1,105 @@
+# SQLAlchemy
+
+### 初始化
+
+```
+from flask_sqlalchemy import SQLAlchemy
+db = SQLAlchemy(app)
+from app import db,models
+```
+
+### 建表
+
+```
+class Music(db.Model):
+    __tablename__ = 'music'
+    music_id = db.Column(db.String(255),primary_key=True)
+    playlist_id = db.Column(db.String(255))
+    music_name = db.Column(db.String(255))
+    music_url = db.Column(db.String(255))
+    artist_name = db.Column(db.String(255))
+    artist_url = db.Column(db.String(255))
+    album_name = db.Column(db.String(255))
+    album_url = db.Column(db.String(255))
+    lyric = db.Column(db.Text)
+    download = db.Column(db.String(255))
+
+    def __repr__(self):
+        music_id = str(self.music_id)
+        playlist_id = str(self.playlist_id)
+        music_name = str(self.music_name)
+        music_url = str(self.music_url)
+        artist_name = str(self.artist_name)
+        artist_url = str(self.artist_url)
+        album_name = str(self.album_name)
+        album_url = str(self.album_url)
+        lyric = str(self.lyric)
+        download = str(self.download)
+
+        return '<%s %s %s %s %s ' \
+               '%s %s %s %s %s >' % (music_id, playlist_id,music_name,
+                                     music_url, artist_name, artist_url,
+                                     album_name, album_url, lyric, download)
+```
+
+### 过滤规则
+
+- 若playlist_id是列表list中的某个值
+
+```
+models.Playlist.query.filter(models.Playlist.playlist_id.in_(list))
+```
+
+- 模糊匹配
+
+```
+models.Playlist.playlist_name.like('%' + keywords + '%')
+```
+
+
+
+# Bootstrap分页
+
+- views.py:
+
+```
+number = request.form.get('number')
+per_page = int(number)
+playlists_before_pagination = models.Playlist.query.filter(
+    models.Playlist.playlist_name.like('%' + keywords + '%'))
+pagination_original = playlists_before_pagination.paginate(page, per_page = per_page)
+playlists = pagination_original.items
+return render_template("playlist.html",number = number, keywords = keywords,
+                           playlists = playlists,
+                           pagination_original = pagination_original)
+```
+
+- playlist.html:
+
+```
+{% extends "base.html" %}
+{% from 'bootstrap/pagination.html' import render_pagination %}
+{% block content %}
+
+<div class="col-sm-8">
+    <table class="table table-striped table-hover">
+        <tr>
+            <th class="text-center">歌单id</th>
+            <th class="text-center">歌单名称</th>
+            <th class="text-center">歌单音乐</th>
+        </tr>
+        <tbody>
+        {% for playlist in playlists %}
+        <tr>
+            <td class="text-center">{{ playlist.playlist_id }}</td>
+            <td class="text-center"><a href="{{ playlist.playlist_url }}">{{ playlist.playlist_name }}</a></td>
+            <td class="text-center"><a href="{{url_for('music',playlist_id= playlist.playlist_id)}}">获取音乐</a></td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <nav style="text-align:center" >
+    <div class="page-footer">{{ render_pagination(pagination_original) }}</div>
+    </nav>
+</div>
+```
