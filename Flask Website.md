@@ -1,4 +1,4 @@
-。# SQLAlchemy
+# SQLAlchemy
 
 ### 初始化
 
