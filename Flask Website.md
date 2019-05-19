@@ -92,3 +92,27 @@ return render_template("playlist.html",number = number, keywords = keywords,
         {% for playlist in playlists %}
         <tr>
             <td class="text-center">{{ playlist.playlist_id }}</td
+
+```
+
+# 下载文件
+
+- views.py:
+
+```
+@app.route('/download/<music_name>',methods=['GET'])
+def download_music(music_name):
+    directory = "F:\MusicDownload"
+    return send_from_directory(directory, music_name, as_attachment=True)
+```
+
+- music.html:
+
+```
+{% if music.download %}
+<td class="text-center"><a href="{{url_for('download_music',music_name = music.download)}}">{{ music.download }}</a></td>
+{% else %}
+<td class="text-center"> None </td>
+{% endif %}
+```
+
