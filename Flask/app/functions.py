@@ -9,8 +9,43 @@ import nltk
 from textrank4zh import TextRank4Keyword
 
 def isNone(para):
-    if para is None:
+    if para is None or para == 'None':
         para = ''
+    return para
+
+def updateChoices(para, form, type):
+    if para is None or para == 'None':
+        para = ''
+    elif para != '' and type == 'language':
+        new_choices = [(para, para)]
+        for i in form.language.choices:
+            if i != (para, para):
+                new_choices = new_choices + [i]
+        form.language.choices = new_choices
+    elif para != '' and type == 'style':
+        new_choices = [(para, para)]
+        for i in form.style.choices:
+            if i != (para, para):
+                new_choices = new_choices + [i]
+        form.style.choices = new_choices
+    elif para != '' and type == 'scene':
+        new_choices = [(para, para)]
+        for i in form.scene.choices:
+            if i != (para, para):
+                new_choices = new_choices + [i]
+        form.scene.choices = new_choices
+    elif para != '' and type == 'emotion':
+        new_choices = [(para, para)]
+        for i in form.emotion.choices:
+            if i != (para, para):
+                new_choices = new_choices + [i]
+        form.emotion.choices = new_choices
+    elif para != '' and type == 'theme':
+        new_choices = [(para, para)]
+        for i in form.theme.choices:
+            if i != (para, para):
+                new_choices = new_choices + [i]
+        form.theme.choices = new_choices
     return para
 
 def initNumber(number):

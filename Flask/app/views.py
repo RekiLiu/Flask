@@ -12,14 +12,14 @@ from flask import make_response,send_from_directory
 @app.route('/test',methods=['POST','GET'])
 def test():
     keywords = None
-    tags = None
+    language = None
     form = forms.PlaylistForm()
     if form.validate_on_submit():
         keywords = form.keywords.data
-        tags = form.tags.data
+        tags = form.language.data
         form.keywords.data = ''
-        form.tags.data = ''
-    return render_template('test.html',form = form, tags = tags)
+        form.language.data = ''
+    return render_template('test.html',form = form, language = language)
 
 @app.route('/index')
 def home():
@@ -37,40 +37,58 @@ def all():
     form = forms.PlaylistForm()
     number = form.number.data
     keywords = form.keywords.data
-    tags = form.tags.data
-    return redirect(url_for('playlist', number = number, keywords = keywords,tags = tags))
+    language = form.language.data
+    style = form.style.data
+    scene = form.scene.data
+    emotion = form.emotion.data
+    theme = form.theme.data
+    return redirect(url_for('playlist', number = number, keywords = keywords,language = language,
+                            style = style, scene = scene, emotion = emotion, theme = theme))
 
 @app.route('/playlist',methods=['POST','GET'])
 def playlist():
     form = forms.PlaylistForm()
     number = functions.initNumber(request.args.get('number'))
     keywords = functions.isNone(request.args.get('keywords'))
-    tags = functions.isNone(request.args.get('tags'))
+    language = functions.updateChoices(request.args.get('language'),form,'language')
+    style = functions.updateChoices(request.args.get('style'),form,'style')
+    scene = functions.updateChoices(request.args.get('scene'),form,'scene')
+    emotion = functions.updateChoices(request.args.get('emotion'),form,'emotion')
+    theme = functions.updateChoices(request.args.get('theme'),form,'theme')
     page = request.args.get('page', 1, type=int)
     per_page = int(number)
     playlists_before_pagination = models.Playlist.query.filter(
         models.Playlist.playlist_name.like('%' + keywords + '%'),
-        models.Playlist.playlist_tag.like('%' + tags + '%'),
-        models.Playlist.playlist_cat.like('%' + tags + '%'))
+        models.Playlist.playlist_tag.like('%' + language + '%'),
+        models.Playlist.playlist_tag.like('%' + style + '%'),
+        models.Playlist.playlist_tag.like('%' + scene + '%'),
+        models.Playlist.playlist_tag.like('%' + emotion + '%'),
+        models.Playlist.playlist_tag.like('%' + theme + '%'))
     pagination_original = playlists_before_pagination.paginate(page, per_page = per_page)
     playlists = pagination_original.items
     cat_sorted, tag_sorted = functions.countPlaylists(playlists_before_pagination)
-    cat_prediction = cat_sorted[0][0]
-    tag_prediction = tag_sorted[0][0]
-    prediction_before_pagination = models.Playlist.query.filter(
-        models.Playlist.playlist_tag.like('%' + tag_prediction + '%'),
-        models.Playlist.playlist_cat.like('%' + cat_prediction + '%'))
-    prediction_page = request.args.get('page1', 1, type=int)
-    pagination_prediction = prediction_before_pagination.paginate(prediction_page, per_page=per_page)
-    predictions = pagination_prediction.items
-    playlists_column = playlists_before_pagination.with_entities(models.Playlist.playlist_name)
-    img_stream = functions.wordcloudImage(playlists_column,'playlist')
-    return render_template("playlist.html",number = number, keywords = keywords,
-                           tags = tags, playlists = playlists, predictions = predictions,
-                           pagination_original = pagination_original,
-                           pagination_prediction = pagination_prediction,
-                           cat_sorted= cat_sorted[:10], tag_sorted = tag_sorted[:10],
-                           img_stream = img_stream, form=form)
+    print cat_sorted, tag_sorted
+    if cat_sorted and tag_sorted:
+        cat_prediction = cat_sorted[0][0]
+        tag_prediction = tag_sorted[0][0]
+        prediction_before_pagination = models.Playlist.query.filter(
+            models.Playlist.playlist_tag.like('%' + tag_prediction + '%'),
+            models.Playlist.playlist_cat.like('%' + cat_prediction + '%'))
+        prediction_page = request.args.get('page1', 1, type=int)
+        pagination_prediction = prediction_before_pagination.paginate(prediction_page, per_page=per_page)
+        predictions = pagination_prediction.items
+        playlists_column = playlists_before_pagination.with_entities(models.Playlist.playlist_name)
+        img_stream = functions.wordcloudImage(playlists_column,'playlist')
+        return render_template("playlist.html",number = number, keywords = keywords,
+                               language = language, style = style, scene = scene,
+                               emotion = emotion, theme = theme,
+                               playlists = playlists, predictions = predictions,
+                               pagination_original = pagination_original,
+                               pagination_prediction = pagination_prediction,
+                               cat_sorted= cat_sorted[:10], tag_sorted = tag_sorted[:10],
+                               img_stream = img_stream, form=form)
+    else:
+        return render_template('404.html'), 404
 
 @app.route('/music/<playlist_id>',methods=['POST','GET'])
 def music(playlist_id):
