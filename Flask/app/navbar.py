@@ -9,6 +9,6 @@ nav.register_element('top', Navbar(
     View('主页', 'home'),
     View('所有音乐','playlist'),
     View('深度分析','analysis'),
-    View('测试', 'test'),
+    # View('测试', 'test'),
     View('关于', 'about')
 ))

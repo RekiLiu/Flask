@@ -1,6 +1,6 @@
 # -*-coding:utf-8-*-
 from flask import Flask
-from navbar import nav
+from .navbar import nav
 from flask_sqlalchemy import SQLAlchemy
 from flask_bootstrap import Bootstrap
 

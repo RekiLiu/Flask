@@ -58,7 +58,7 @@ def wordcloudImage(playlists_column, name):
     csv_file = './app/static/files/_' + name + '_wordcloud.csv'
     df = pd.DataFrame(data=list(playlists_column))
     df.to_csv(csv_file,index = False, header = False )
-    text = open(csv_file).read()
+    text = open(csv_file,encoding='utf8').read()
     jieba.analyse.set_stop_words('./app/static/files/_stopwords.txt')
     # cut_text = " ".join(jieba.cut(text))
     # 基于 TF-IDF 算法的关键词抽取
@@ -73,7 +73,7 @@ def wordcloudImage(playlists_column, name):
     with open(img_file, 'rb') as img_f:
         img_stream = img_f.read()
         img_stream = base64.b64encode(img_stream)
-        return img_stream
+        return img_stream.decode()
 
 def countPlaylists(playlists):
     cats = {}
@@ -121,5 +121,4 @@ def findKeywords(lyrics_column,name):
     tr4w = TextRank4Keyword()
     tr4w.analyze(text=cut_text, lower=True, window=3)
     keywords = [w['word'] for w in tr4w.get_keywords(num=10, word_min_len=2)]
-    print keywords
     return keywords

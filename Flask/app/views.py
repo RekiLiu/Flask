@@ -1,25 +1,24 @@
 # -*-coding:utf-8-*-
 import sys
-reload(sys)
-sys.setdefaultencoding('utf8')
+import importlib
+importlib.reload(sys)
 
 from app import app
 from app import db,models,functions,forms
 from flask import render_template,request,url_for,redirect
 from flask import make_response,send_from_directory
 
-
 @app.route('/test',methods=['POST','GET'])
-def test():
-    keywords = None
-    language = None
-    form = forms.PlaylistForm()
-    if form.validate_on_submit():
-        keywords = form.keywords.data
-        tags = form.language.data
-        form.keywords.data = ''
-        form.language.data = ''
-    return render_template('test.html',form = form, language = language)
+# def test():
+#     keywords = None
+#     language = None
+#     form = forms.PlaylistForm()
+#     if form.validate_on_submit():
+#         keywords = form.keywords.data
+#         tags = form.language.data
+#         form.keywords.data = ''
+#         form.language.data = ''
+#     return render_template('test.html',form = form, language = language)
 
 @app.route('/index')
 def home():
@@ -67,7 +66,6 @@ def playlist():
     pagination_original = playlists_before_pagination.paginate(page, per_page = per_page)
     playlists = pagination_original.items
     cat_sorted, tag_sorted = functions.countPlaylists(playlists_before_pagination)
-    print cat_sorted, tag_sorted
     if cat_sorted and tag_sorted:
         cat_prediction = cat_sorted[0][0]
         tag_prediction = tag_sorted[0][0]
@@ -128,7 +126,7 @@ def lyric(music_id):
 
 @app.route('/download/<music_name>',methods=['GET'])
 def download_music(music_name):
-    directory = "F:\NeteaseMusicDownload"
+    directory = "F:\\NeteaseMusicDownload"
     return send_from_directory(directory, music_name, as_attachment=True)
 
 @app.route('/about')
@@ -167,7 +165,6 @@ def results():
             models.Music.playlist_id.in_(cat_playlists))
         lyrics_column = lyrics.with_entities(models.Music.lyric)
         category_keywords = functions.findKeywords(lyrics_column,'lyrics')
-        print category_keywords
 
     return render_template("analysis.html",artist = artist, artist_keywords = artist_keywords,
                            category = category,category_keywords=category_keywords)
