@@ -111,13 +111,14 @@ def recommendPlaylist(musics, original_playlist_id):
                 recommend_list.append(playlist_id)
     return recommend_list
 
-def findKeywords(lyrics_column,name):
+def findKeywords(column,name):
     csv_file = './app/static/files/_' + name + '_analysis.csv'
-    df = pd.DataFrame(data=list(lyrics_column))
+    df = pd.DataFrame(data=list(column))
     df.to_csv(csv_file,index = False, header = False )
-    text = open(csv_file).read()
+    text = open(csv_file,encoding='utf8').read()
     jieba.analyse.set_stop_words('./app/static/files/_stopwords.txt')
     cut_text = " ".join(jieba.analyse.extract_tags(text,100))
+    print(cut_text)
     tr4w = TextRank4Keyword()
     tr4w.analyze(text=cut_text, lower=True, window=3)
     keywords = [w['word'] for w in tr4w.get_keywords(num=10, word_min_len=2)]

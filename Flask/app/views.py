@@ -137,22 +137,36 @@ def about():
 def analysis():
     artist = functions.isNone(request.form.get('artist'))
     category = functions.isNone(request.form.get('category'))
-    return redirect(url_for('results',artist = artist,category = category))
+    comment = functions.isNone(request.form.get('comment'))
+    return redirect(url_for('results',artist = artist,category = category,comment = comment))
 
 
 @app.route('/results',methods=['POST','GET'])
 def results():
     artist = functions.isNone(request.args.get('artist'))
     category = functions.isNone(request.args.get('category'))
+    comment = functions.isNone(request.args.get('comment'))
     artist_keywords = ''
     category_keywords = ''
+    comment_keywords = ''
     cat_playlists = []
+    com_playlists = []
 
     if artist:
         lyrics = models.Music.query.filter(
             models.Music.artist_name.like('%' + artist + '%'))
         lyrics_column = lyrics.with_entities(models.Music.lyric)
         artist_keywords = functions.findKeywords(lyrics_column,'lyrics')
+
+    if comment:
+        playlist_id = models.Playlist.query.filter(
+            models.Playlist.playlist_tag.like('%' + comment + '%')).with_entities(models.Playlist.playlist_id)
+        for i in playlist_id:
+            print(i)
+            com_playlists.append(i)
+        comments_column = models.Comments.query.filter(
+            models.Comments.playlist_id.in_(com_playlists)).with_entities(models.Comments.comment_content)
+        comment_keywords = functions.findKeywords(comments_column,'comments')
 
     if category:
         playlists = models.Playlist.query.filter(
@@ -167,4 +181,5 @@ def results():
         category_keywords = functions.findKeywords(lyrics_column,'lyrics')
 
     return render_template("analysis.html",artist = artist, artist_keywords = artist_keywords,
-                           category = category,category_keywords=category_keywords)
+                           category = category,category_keywords=category_keywords,
+                           comment = comment, comment_keywords=comment_keywords)

@@ -150,4 +150,24 @@ class MusicBGM(db.Model):
                                      album_name, album_url, lyric, download)
 
 
+class Comments(db.Model):
+    __tablename__ = 'comment'
+    comment_id = db.Column(db.String(255),primary_key=True)
+    music_id = db.Column(db.String(255))
+    playlist_id = db.Column(db.String(255))
+    user_id = db.Column(db.String(255))
+    comment_content = db.Column(db.String(255))
+    comment_like_count = db.Column(db.String(255))
 
+    def __repr__(self):
+        music_id = str(self.music_id)
+        playlist_id = str(self.playlist_id)
+        comment_id  = str(self.comment_id )
+        user_id = str(self.user_id)
+        comment_content = str(self.comment_content)
+        comment_like_count = str(self.comment_like_count)
+
+
+        return '<%s %s %s %s %s ' \
+               '%s %s %s %s %s >' % (music_id, playlist_id,
+                                     comment_id,user_id,comment_content,comment_like_count)
