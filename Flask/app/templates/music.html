@@ -93,10 +93,15 @@
             <div class="page1-footer">{{ render_pagination(pagination_prediction) }}</div>
             </nav>
         </div>
+        {% if show_img %}
         <div class="col-sm-4">
             <h3>歌词词云图</h3>
             <img class='center-block' src="data:;base64,{{ img_stream }}" width="90%" height="90%" />
-
         </div>
+        {% else %}
+        <div class="col-sm-4">
+            <h3>无歌词词云图</h3>
+        </div>
+        {% endif %}
     </div>
 {% endblock %}
