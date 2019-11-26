@@ -1,0 +1,181 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="span12">
+            <div class="page-header">
+                <h1>
+                    <em>Apple Store Photo & Video Apps（摄影与摄像）</em> <em>
+                    <small>The Photo & Video app rankings and details in Apple Store</small>
+                </em>
+                </h1>
+            </div>
+            <div>
+
+                <form class="form-inline" method="POST" action="{{url_for('apple_data')}}">
+
+                    <h3>
+                        <em>Select Date：</em>
+                    </h3>
+
+                    <div class="form-group">
+                        <label for="start_date" class="form-label">Start Date:</label>
+                        <input type="text" id="start_date" name="start_date" value="{{start_date}}"/>
+                        <label for="end_date">End Date:</label>
+                        <input type="text" id="end_date" name="end_date" value="{{end_date}}"/>
+                        <input type="submit" class="btn btn-default" id="btn_data" value="GO">
+                    </div>
+                </form>
+                <h3><em> The difference between {{end_date}} and {{ start_date }} (based on {{end_date}}):</em></h3>
+                <table class="table table-striped table-hover">
+                    <tr>
+                        <th class="text-center">app</th>
+                        <th class="text-center">category</th>
+                        <th class="text-center">rank</th>
+                        <th class="text-center"></th>
+                        <th class="text-center">total rank</th>
+                        <th class="text-center"></th>
+                        <th class="text-center">rating</th>
+                        <th class="text-center">comment</th>
+                        <th class="text-center">new comment</th>
+                        <th class="text-center">publish date</th>
+                        <th class="text-center">last release date</th>
+                        <th class="text-center">company</th>
+                    </tr>
+                    <tbody>
+                    {% for d in details %}
+                    <tr>
+                        <td><a href="{{ d[0].app_link }}">{{ d[0].app_name }}</a></td>
+                        <td class="text-center">{{ d[0].category }}</a></td>
+                        <td class="text-center">{{ d[1].rank }}</td>
+                        {% if diff_dict[d[0].app_name][0]|int > 0 %}
+                        <td class="text-center" style="color:red;">+{{ diff_dict[d[0].app_name][0] }}</td>
+                        {% elif diff_dict[d[0].app_name][0]|int < 0%}
+                        <td class="text-center" style="color:green;">{{ diff_dict[d[0].app_name][0] }}</td>
+                        {% else %}
+                        <td class="text-center">{{ diff_dict[d[0].app_name][0] }}</td>
+                        {% endif %}
+
+                        {% if d[1].total_rank|int == 0%}
+                            <td class="text-center">-</td>
+                        {% else %}
+                            <td class="text-center">{{ d[1].total_rank }}</td>
+                        {% endif %}
+
+                        {% if diff_dict[d[0].app_name][3]|int > 0 %}
+                        <td class="text-center" style="color:red;">+{{ diff_dict[d[0].app_name][3] }}</td>
+                        {% elif diff_dict[d[0].app_name][3]|int < 0%}
+                        <td class="text-center" style="color:green;">{{ diff_dict[d[0].app_name][3] }}</td>
+                        {% elif diff_dict[d[0].app_name][3]|int == 0%}
+                        <td class="text-center" style="color:green;">-</td>
+                        {% else %}
+                        <td class="text-center">{{ diff_dict[d[0].app_name][3] }}</td>
+                        {% endif %}
+
+
+                        <td class="text-center">{{ d[1].rating }}</td>
+                        <td class="text-center">{{ d[1].comment_count }}</td>
+
+                        {% if diff_dict[d[0].app_name][2]|int > 1000 %}
+                        <td class="text-center" style="color:red;">{{ diff_dict[d[0].app_name][2] }}</td>
+                        {% else %}
+                        <td class="text-center">{{ diff_dict[d[0].app_name][2] }}</td>
+                        {% endif %}
+                        <td class="text-center">{{ d[0].publish_date }}</td>
+                        <td class="text-center">{{ d[0].last_release_date }}</td>
+                        <td><a href="{{ d[0].company_link }}">{{ d[0].company_name }}</a></td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+
+                </table>
+                <h3><em>Top 200 photo & video apps based on {{end_date}}:</em></h3>
+                <table class="table table-striped table-hover">
+                    <tr>
+                        <th class="text-center">app</th>
+                        <th class="text-center">category</th>
+                        <th class="text-center">rank</th>
+                        <th class="text-center"></th>
+                        <th class="text-center">total rank</th>
+                        <th class="text-center"></th>
+                        <th class="text-center">rating</th>
+                        <th class="text-center">comment</th>
+                        <th class="text-center">new comment</th>
+                        <th class="text-center">publish date</th>
+                        <th class="text-center">last release date</th>
+                        <th class="text-center">company</th>
+                    </tr>
+                    <tbody>
+                    {% for d in all_details %}
+                    <tr>
+                        <td><a href="{{ d[0].app_link }}">{{ d[0].app_name }}</a></td>
+                        <td class="text-center">{{ d[0].category }}</a></td>
+                        <td class="text-center">{{ d[1].rank }}</td>
+
+                        {% if all_diff_dict[d[0].app_name][0]|int > 0 %}
+                        <td class="text-center" style="color:red;">+{{ all_diff_dict[d[0].app_name][0] }}</td>
+                        {% elif all_diff_dict[d[0].app_name][0]|int < 0%}
+                        <td class="text-center" style="color:green;">{{ all_diff_dict[d[0].app_name][0] }}</td>
+                        {% else %}
+                        <td class="text-center">{{ all_diff_dict[d[0].app_name][0] }}</td>
+                        {% endif %}
+
+                        {% if d[1].total_rank|int == 0%}
+                            <td class="text-center">-</td>
+                        {% else %}
+                            <td class="text-center">{{ d[1].total_rank }}</td>
+                        {% endif %}
+
+                        {% if all_diff_dict[d[0].app_name][3]|int > 0 %}
+                        <td class="text-center" style="color:red;">+{{ all_diff_dict[d[0].app_name][3] }}</td>
+                        {% elif all_diff_dict[d[0].app_name][3]|int < 0%}
+                        <td class="text-center" style="color:green;">{{ all_diff_dict[d[0].app_name][3] }}</td>
+                        {% elif all_diff_dict[d[0].app_name][3]|int == 0%}
+                        <td class="text-center" style="color:green;">-</td>
+                        {% else %}
+                        <td class="text-center">{{ all_diff_dict[d[0].app_name][3] }}</td>
+                        {% endif %}
+
+                        <td class="text-center">{{ d[1].rating }}</td>
+
+                        <td class="text-center">{{ d[1].comment_count }}</td>
+
+                        {% if all_diff_dict[d[0].app_name][2]|int > 1000 %}
+                        <td class="text-center" style="color:red;">{{ all_diff_dict[d[0].app_name][2] }}</td>
+                        {% else %}
+                        <td class="text-center">{{ all_diff_dict[d[0].app_name][2] }}</td>
+                        {% endif %}
+                        <td class="text-center">{{ d[0].publish_date }}</td>
+                        <td class="text-center">{{ d[0].last_release_date }}</td>
+                        <td><a href="{{ d[0].company_link }}">{{ d[0].company_name }}</a></td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script type="text/javascript">
+    $('#start_date').datepicker({
+        weekStart: 1,
+        autoclose: true,
+        daysOfWeekHighlighted: "0,6",
+        format: "yyyy-mm-dd",
+        language: "zh-CN"
+    });
+    $('#end_date').datepicker({
+        weekStart: 1,
+        autoclose: true,
+        daysOfWeekHighlighted: "0,6",
+        format: "yyyy-mm-dd",
+        language: "zh-CN"
+    });
+
+</script>
+{% endblock %}

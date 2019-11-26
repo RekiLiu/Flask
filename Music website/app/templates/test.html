@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf%}
+
+{% block content %}
+<form class="form-inline" method="POST">
+    {{ wtf.form_field(form.keywords) }}
+    {{ wtf.form_field(form.tags) }}
+    {{ wtf.form_field(form.submit) }}
+</form>
+{{keywords}}
+{{tags}}
+{% endblock %}

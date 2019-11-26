@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="span12">
+            <div class="page-header">
+                <h1>
+                    <em>Instagram Keywords Configuration</em> <em>
+                    <small>Add your own keywords</small>
+                </em>
+                </h1>
+            </div>
+            <div>
+                <h3>WARNING</h3>
+                <p>
+                    Can't change keywords now because the spider is not running on this server.
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <form class="form-inline" method="POST" action="{{url_for('ins_conf')}}">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label for="original" class="form-label">
+                        <h3>
+                            <em>The keywords in file:</em>
+                        </h3>
+                    </label><br>
+                    <textarea id="original" rows="20" cols="40" disabled>{% for o in original %}{{ o }}{% endfor %}</textarea><br>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label for="content" class="form-label">
+                        <h3>
+                            <em>Update keywords:</em>
+                        </h3>
+                    </label><br>
+                    <textarea id="content" name="content" rows="20" cols="40">{% for o in original %}{{ o }}{% endfor %}</textarea><br>
+                    <input type="submit" class="btn btn-default" id="btn_data" value="Submit">
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

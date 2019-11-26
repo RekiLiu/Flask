@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="span12">
+            <div class="page-header">
+                <h1>
+                    <em>Sticker to Image</em> <em>
+                    <small>Put sticker names here</small>
+                </em>
+                </h1>
+            </div>
+            <div>
+                <h3>WARNING</h3>
+                <p>
+                    Please pay attention to the format.
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class = "col-sm-12">
+            <table class="table table-striped table-hover">
+                <tr>
+                    <th class="text-center">category_id</th>
+                    <th class="text-center">sticker_id</th>
+                    <th class="text-center">category_name</th>
+                    <th class="text-center">sticker_name</th>
+                    <th class="text-center">sticker_img</th>
+                </tr>
+                <tbody>
+                {% for sticker in stickers %}
+                <tr>
+                    <td class="text-center">{{sticker[0].category_id}}</td>
+                    <td class="text-center">{{sticker[0].sticker_id}}</td>
+                    <td class="text-center">{{sticker[0].category_name}}</td>
+                    <td class="text-center">{{sticker[0].sticker_name}}</td>
+                    <td rowspan="2" class="text-center">
+                        <img src={{sticker[0].sticker_thumbnail}} height="60" width="60">
+                        <img src={{sticker[1].sticker_thumbnail}} height="60" width="60">
+                    </td>
+                </tr>
+                <tr>
+                    <td class="text-center">{{sticker[1].category_id}}</td>
+                    <td class="text-center">{{sticker[1].sticker_id}}</td>
+                    <td class="text-center">{{sticker[1].category_name}}</td>
+                    <td class="text-center">{{sticker[1].sticker_name}}</td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

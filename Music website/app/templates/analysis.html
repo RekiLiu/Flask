@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container" id="keywords">
+    <div id="artist" style="height:200px">
+         <h3>
+        想知道歌手们都在唱什么吗？
+        </h3>
+        <form class = "form-inline" action = "{{url_for('analysis',artist = artist)}}" method = "post">
+            <label>请输入查询歌手: </label>
+            <input type = "text" name = 'artist' placeholder="{{ artist }}" value="{{ artist }}">
+            <button type = "submit" value= "submit" class="btn btn-default">Submit</button>
+        </form>
+        <h4>
+            {% if artist %}
+            <br><strong>{{artist}}</strong>所有歌曲中的关键词为：
+            {% for artist_keyword in artist_keywords %}
+                {{artist_keyword}}
+            {% endfor %}
+            {% endif %}
+        </h4>
+    </div>
+    <div id="category" style="height:200px">
+        <h3>
+            <br>想知道00后、90后、80后喜欢的歌中经常出现什么关键词吗？
+        </h3>
+        <form class = "form-inline" action = "{{url_for('analysis',category = category)}}" method = "post">
+                <label>请输入查询类别: </label>
+                <input type = "text" name = 'category' placeholder="{{ category }}" value="{{ category }}">
+                <button type = "submit" value= "submit" class="btn btn-default">Submit</button>
+        </form>
+         <h4>
+            {% if category %}
+            <br><strong>{{category}}</strong>所有歌曲中的关键词为：
+            {% for category_keyword in category_keywords %}
+                {{category_keyword}}
+            {% endfor %}
+            {% endif %}
+        </h4>
+    </div>
+
+    <div id="comment" style="height:200px">
+        <h3>
+            <br>想知道某类型的歌曲评论中经常出现什么关键词吗？
+        </h3>
+        <form class = "form-inline" action = "{{url_for('analysis',comment = comment)}}" method = "post">
+                <label>请输入查询类别: </label>
+                <input type = "text" name = 'comment' placeholder="{{ comment }}" value="{{ comment}}">
+                <button type = "submit" value= "submit" class="btn btn-default">Submit</button>
+        </form>
+         <h4>
+            {% if comment %}
+            <br><strong>{{comment}}</strong>类型的歌曲评论中的关键词为：
+            {% for comment_keyword in comment_keywords %}
+                {{comment_keyword}}
+            {% endfor %}
+            {% endif %}
+        </h4>
+    </div>
+
+</div>
+{% endblock %}

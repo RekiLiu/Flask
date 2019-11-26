@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+{% from 'bootstrap/pagination.html' import render_pagination %}
+{% import "bootstrap/wtf.html" as wtf%}
+{% block content %}
+    <form class="form-inline" method="POST" action = "/music/<type>/<playlist_id>">
+        {{ wtf.form_field(form.number, value = number ) }}
+        {{ wtf.form_field(form.keywords, value = keywords ) }}
+        {{ wtf.form_field(form.artist, value = artist) }}
+        {{ wtf.form_field(form.submit) }}
+    </form>
+    <div class="row">
+        <div class="col-sm-8">
+            <table class="table table-striped table-hover">
+                <tr>
+                    <th class="text-center">歌曲id</th>
+                    <!--<th class="text-center">歌单id</th>-->
+                    <th class="text-center">音乐名称</th>
+                    <th class="text-center">艺术家名称</th>
+                    <th class="text-center">专辑名称</th>
+                    <th class="text-center">歌词</th>
+                    <th class="text-center">音乐下载</th>
+                </tr>
+                <tbody>
+                {% for music in musics %}
+                <tr>
+                    <td class="text-center">{{ music.music_id }}</td>
+                    <!--<td class="text-center">{{ music.playlist_id }}</td>-->
+                    <td class="text-center">{{ music.music_name }}</td>
+                    <td class="text-center">{{ music.artist_name }}</td>
+                    <td class="text-center">{{ music.album_name }}</td>
+                    <td class="text-center"><a href="{{url_for('lyric',music_id = music.music_id)}}">获取歌词</a></td>
+                    {% if music.download %}
+                    <td class="text-center"><a href="{{url_for('download_music',music_name = music.download)}}">{{ music.download }}</a></td>
+                    {% else %}
+                    <td class="text-center"> None </td>
+                    {% endif %}
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            <nav style="text-align:center" >
+                <div class="page-footer">{{ render_pagination(pagination_original) }}</div>
+            </nav>
+            <h2>
+                相关搜索
+            </h2>
+            <table class="table table-striped table-hover">
+                <tr>
+                    <th class="text-center">歌单id</th>
+                    <th class="text-center">歌单名称</th>
+                    <th class="text-center">歌单类别</th>
+                    <th class="text-center">歌单标签</th>
+                    <th class="text-center">歌单作者</th>
+                    <th class="text-center">发布时间</th>
+                    <th class="text-center">收藏数</th>
+                    <!--<th class="text-center">歌曲数量</th>-->
+                    <th class="text-center">歌单音乐</th>
+                    <!--
+                    <th>playlist_desc</th>
+                    <th>playlist_share_count</th>
+                    <th>playlist_comment_count</th>
+                    -->
+                </tr>
+                <tbody>
+                {% for prediction in predictions %}
+                <tr>
+                    <td class="text-center">{{ prediction.playlist_id }}</td>
+                    <td class="text-center">
+                        <!--<a href="{{ prediction.playlist_url }}">-->
+                            {{ prediction.playlist_name }}
+                        <!--</a>-->
+                    </td>
+                    <td class="text-center">{{ prediction.playlist_cat }}</td>
+                    <td class="text-center">{{ prediction.playlist_tag }}</td>
+                    <td class="text-center">
+                        <!--<a href="{{ prediction.playlist_author_url }}">-->
+                        {{ prediction.playlist_author }}
+                        <!--</a>-->
+                    </td>
+                    <td class="text-center">{{ prediction.playlist_pubtime }}</td>
+                    <td class="text-center">{{ prediction.playlist_fav_count }}</td>
+                    <td class="text-center"><a href="{{url_for('music',playlist_id= prediction.playlist_id)}}">获取音乐</a></td>
+                    <!--
+                    <td>{{ prediction.playlist_desc }}</td>
+                    <td>{{ prediction.playlist_share_count }}</td>
+                    <td>{{ prediction.playlist_comment_count }}</td>
+                    -->
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            <nav style="text-align:center" >
+            <div class="page1-footer">{{ render_pagination(pagination_prediction) }}</div>
+            </nav>
+        </div>
+        {% if show_img %}
+        <div class="col-sm-4">
+            <h3>歌词词云图</h3>
+            <img class='center-block' src="data:;base64,{{ img_stream }}" width="90%" height="90%" />
+        </div>
+        {% else %}
+        <div class="col-sm-4">
+            <h3>无歌词词云图</h3>
+        </div>
+        {% endif %}
+    </div>
+{% endblock %}

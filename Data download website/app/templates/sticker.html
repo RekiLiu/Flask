@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="span12">
+            <div class="page-header">
+                <h1>
+                    <em>Sticker to Image</em> <em>
+                    <small>Put sticker names here and you can get the corresponding images.</small>
+                </em>
+                </h1>
+            </div>
+            <div>
+                <h3>WARNING</h3>
+                <p>
+                    Please pay attention to the format.
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <form class="form-inline" method="POST" action="{{url_for('show_sticker')}}">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label for="content" class="form-label">
+                        <h3>
+                            <em>Put sticker names here:</em>
+                        </h3>
+                    </label><br>
+                    <textarea id="content" name="content" rows="20" cols="40"></textarea><br>
+                    <input type="submit" class="btn btn-default" id="btn_data" value="Submit">
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

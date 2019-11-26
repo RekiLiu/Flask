@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf%}
+{% block content %}
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="span12">
+            <div class="page-header">
+                <h1>
+                    <em>Data Analysis</em> <em>
+                    <small>Download data from Weibo</small>
+                </em>
+                </h1>
+            </div>
+
+            {%if db_names%}
+            <h3>
+                <em>Select Database：</em>
+            </h3>
+            {% for db in db_names %}
+            <a class="btn btn-default" href="{{ url_for('wb_db', db = db) }}">{{db}}</a>
+            {% endfor %}
+            {% endif%}
+
+            {% if user_db_name %}
+            <h3>
+                <em>Select Keywords:</em>
+                <em class="text-muted">{{user_db_name}}</em>
+            </h3>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="span12">
+            <div class="page-header">
+                <h1>
+                    <em>Data Analysis</em> <em>
+                    <small>Download data from MongoDB</small>
+                </em>
+                </h1>
+            </div>
+
+            {% if user_db_name %}
+            <h3>
+                <em>Select Database:</em>
+                <span class="label label-info" >{{user_db_name}}</span>
+            </h3>
+            {% endif %}
+        </div>
+    </div>
+    <div class="row-fluid">
+        <div class="span12">
+            {% if collection_names%}
+            <h3>
+                <em>Select Table：</em>
+            </h3>
+
+            <form class="form-inline" method="POST" action="{{url_for('wb_data', user_db_name = user_db_name)}}">
+                <div class="row">
+                    {% for collection in collection_names %}
+                    <div class="col-sm-2  top-buffer">
+                        <div class="pretty p-default p-curve">
+                            <input type="checkbox" class="user_collection" name="user_collection" value={{collection}}>
+                            <div class="state">
+                                <label>{{collection}}</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    {% endfor %}
+                </div>
+
+                <div class="row">
+                    <div class="col-sm-2  top-buffer">
+                        <div class="pretty p-switch p-fill">
+                            <input type="checkbox" name="selectall" id="selectall">
+                            <div class="state">
+                                <label>Select All</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {% if user_db_name != 'result'%}
+                <h3>
+                    <em>Select Date：</em>
+                </h3>
+                {% endif %}
+
+                <div class="form-group">
+                    {% if user_db_name != 'result'%}
+                    <label for="start_date" class="form-label">Start Date:</label>
+                    <input type="text" id="start_date" name="start_date" value="{{last_monday}}"/>
+
+
+                    <label for="end_date">End Date:</label>
+                    <input type="text" id="end_date" name="end_date" value="{{last_sunday}}"/>
+                    {% endif %}
+
+                    <input type="submit" class="btn btn-default" id="btn_data" value="GO">
+                </div>
+            </form>
+
+            {% endif%}
+
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+{% block scripts %}
+{{ super() }}
+<script type="text/javascript">
+    $('#start_date').datepicker({
+        weekStart: 1,
+        autoclose: true,
+        daysOfWeekHighlighted: "0,6",
+        format: "yyyy-mm-dd",
+        language: "zh-CN"
+    });
+    $('#end_date').datepicker({
+        weekStart: 1,
+        autoclose: true,
+        daysOfWeekHighlighted: "0,6",
+        format: "yyyy-mm-dd",
+        language: "zh-CN"
+    });
+
+
+    $("#selectall").click(function(){
+        var clicked = $(this).prop("checked");
+        var checkbox = $(".user_collection").prop("checked",clicked);
+        })
+
+</script>
+{% endblock %}
