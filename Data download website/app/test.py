@@ -7,6 +7,7 @@ from langdetect import detect
 from hanziconv import HanziConv
 from snownlp import SnowNLP
 import codecs
+import jieba.posseg as pseg
 
 language_dict = {
     # ISO 639-1
@@ -132,14 +133,16 @@ if __name__ == '__main__':
     # results = cursor.fetchall()
     # for item in results:
     #     print(item)
-    stopwords = [line.strip() for line in codecs.open('stopwords.txt', 'r', 'utf-8').readlines()]
-    jieba.analyse.set_stop_words('stopwords.txt')
-    rule = re.compile('[\u4e00-\u9fa5]+', re.X)
-    with open('C:/Users/W/Desktop/translation.txt', encoding='utf8') as f:
-        data = f.read()
-    # data = re.sub(rule,'',data)
-    data = ''.join(re.findall(rule, data))
-    simplifed = HanziConv.toSimplified(data)
+
+    # 获取分词结果/关键词
+    # stopwords = [line.strip() for line in codecs.open('stopwords.txt', 'r', 'utf-8').readlines()]
+    # jieba.analyse.set_stop_words('stopwords.txt')
+    # rule = re.compile('[\u4e00-\u9fa5]+', re.X)
+    # with open('C:/Users/W/Desktop/translation.txt', encoding='utf8') as f:
+    #     data = f.read()
+    # # data = re.sub(rule,'',data)
+    # data = ''.join(re.findall(rule, data))
+    # simplifed = HanziConv.toSimplified(data)
     # words = jieba.cut(simplifed)
     # seg_dict = {}
     # for word in words:
@@ -150,8 +153,40 @@ if __name__ == '__main__':
     #             seg_dict[word] = 1
     # print(seg_dict)
     # print(sorted(seg_dict.items(), key=lambda d: d[1], reverse=True))
+    #
+    # keywords = jieba.analyse.textrank(simplifed, topK=20,withWeight=False,allowPOS=('ns', 'n', 'vn', 'v'))
+    # splitedStr = ''
+    # for word in keywords:
+    #     print(word)
 
-    keywords = jieba.analyse.textrank(simplifed, topK=20,withWeight=False,allowPOS=('ns', 'n', 'vn', 'v'))
-    splitedStr = ''
-    for word in keywords:
-        print(word)
+    # snowNLP的效果没有jieba分词好
+    rule = re.compile('[\u4e00-\u9fa5]+', re.X)
+    n_list = []
+    a_list = []
+
+    with open('C:/Users/W/Desktop/translation.txt', encoding='utf8') as f:
+        data = f.readlines()
+        for d in data:
+            d = ' '.join(re.findall(rule, d))
+            if len(d) > 0:
+                d = HanziConv.toSimplified(d)
+                # s = SnowNLP(d)python 词性 jieba
+                # print(HanziConv.toSimplified(d))
+                # print(s.sentiments)
+                # print(s.tags)
+                # for tag in s.tags:
+                #     print(tag)
+
+                words = pseg.cut(d)
+                for w in words:
+                    print(w.word,w.flag)
+                    word = w.word
+                    POS = w.flag
+                    if POS == 'n':
+                        n_list.append(word)
+                    elif POS in ['a','ad','an']:
+                        a_list.append(word)
+                    print(w.flag.split(' ')[-1])
+                print('*'*20)
+        print(n_list)
+        print(a_list)
