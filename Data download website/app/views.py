@@ -2,14 +2,15 @@
 import sys
 import importlib
 import time
+import re
 
 importlib.reload(sys)
 
 from app import app
 from app import mongo, mysql, functions, models
 from config import FILE_DIRECTORY as file_dir
-from config import WEIBO_KEYWORDS_DIRECTORY, INS_KEYWORDS_DIRECTORY, \
-    APPLE_KEYWORDS_DIRECTORY, HUAWEI_KEYWORDS_DIRECTORY,AMUSE_KEYWORDS_DIRECTORY,MAKEUP_KEYWORDS_DIRECTORY,DOUYIN_KEYWORDS_DIRECTORY
+from config import WEIBO_KEYWORDS_DIRECTORY, INS_KEYWORDS_DIRECTORY,APPLE_KEYWORDS_DIRECTORY, HUAWEI_KEYWORDS_DIRECTORY,\
+    AMUSE_KEYWORDS_DIRECTORY,MAKEUP_KEYWORDS_DIRECTORY,DOUYIN_KEYWORDS_DIRECTORY,FILTER_KEYWORDS_DIRECTORY
 from flask import render_template, redirect, url_for, request, send_from_directory
 from sqlalchemy import and_, or_, distinct
 
@@ -57,6 +58,11 @@ def wb_data():
 
 @app.route('/download_wbdata', methods=['POST', 'GET'])
 def download_wbdata():
+    filter_list = []
+    with open(FILTER_KEYWORDS_DIRECTORY, 'r', encoding='utf-8') as f:
+        for line in f.readlines():
+            filter_list.append(line.strip())
+    print(filter_list)
     user_db_name = request.args.get('user_db_name')
     if user_db_name == 'result':
         start_date = ''
@@ -65,7 +71,6 @@ def download_wbdata():
         start_date = request.args.get('start_date')
         end_date = request.args.get('end_date')
         days_list = functions.get_dayslist(start_date, end_date)
-
     user_collection_names = request.args.getlist('user_collection_names')
     db = mongo[user_db_name]
     data_file_name = functions.get_file_name(start_date, end_date, user_db_name, 'data')
@@ -77,8 +82,9 @@ def download_wbdata():
         if user_db_name == 'result':
             documents = collection.find({})
         else:
-            documents = collection.find({"time": {"$in": days_list}})
-
+            documents = collection.find({"$and": [{"time": {"$in": days_list}}] +
+                                                 [{"text": {"$not": re.compile("b6-{0,1}12.{0,5}星球{0,1}", re.I)}}] +
+                                                 [{"text": {"$not": re.compile(".*{}.*".format(i), re.I)}} for i in filter_list]})
         if documents.count() == 0:
             documents = ['']
 
@@ -93,6 +99,10 @@ def download_wbdata():
 
 @app.route('/download_wbhashtag', methods=['POST', 'GET'])
 def download_wbhashtag():
+    filter_list = []
+    with open(FILTER_KEYWORDS_DIRECTORY, 'r', encoding='utf-8') as f:
+        for line in f.readlines():
+            filter_list.append(line.strip())
     start_date = request.args.get('start_date')
     end_date = request.args.get('end_date')
     user_db_name = request.args.get('user_db_name')
@@ -104,7 +114,9 @@ def download_wbhashtag():
     hashtag_writer = functions.create_writer(file_dir + hashtag_file_name)
     for user_collection_name in user_collection_names:
         collection = db[user_collection_name]
-        documents = collection.find({"time": {"$in": days_list}})
+        documents = collection.find({"$and":[{"time": {"$in": days_list}}] +
+                                            [{"text": {"$not": re.compile("b6-{0,1}12.{0,5}星球{0,1}",re.I)}}] +
+                                            [{"text": {"$not": re.compile(".*{}.*".format(i),re.I)}} for i in filter_list]})
         if documents.count() == 0:
             documents = ['']
         my_hashtag_writer = functions.hashtag2excel(hashtag_writer, documents, user_collection_name)
@@ -421,8 +433,12 @@ def huawei():
             order_by(models.Huaweistore.time.desc()).all()
         if len(results) == 2:
             rank_diff = int(results[1].rank) - int(results[0].rank)
-            rating_diff = float(results[0].rating) - float(results[1].rating)
-            comment_diff = int(results[0].comment_count) - int(results[1].comment_count)
+            try:
+                rating_diff = float(results[0].rating) - float(results[1].rating)
+                comment_diff = int(results[0].comment_count) - int(results[1].comment_count)
+            except Exception:
+                rating_diff = 'None'
+                comment_diff = 'None'
             diff_list = [rank_diff, rating_diff, comment_diff]
             diff_dict[app] = diff_list
         else:
@@ -442,8 +458,12 @@ def huawei():
             order_by(models.Huaweistore.time.desc()).all()
         if len(all_results) == 2:
             rank_diff = int(all_results[1].rank) - int(all_results[0].rank)
-            rating_diff = float(all_results[0].rating) - float(all_results[1].rating)
-            comment_diff = int(all_results[0].comment_count) - int(all_results[1].comment_count)
+            try:
+                rating_diff = float(all_results[0].rating) - float(all_results[1].rating)
+                comment_diff = int(all_results[0].comment_count) - int(all_results[1].comment_count)
+            except Exception:
+                rating_diff = 'None'
+                comment_diff = 'None'
             all_diff_list = [rank_diff, rating_diff, comment_diff]
             all_diff_dict[app] = all_diff_list
         else:
@@ -627,6 +647,24 @@ def huawei_conf():
             for line in f.readlines():
                 original.append(line.lstrip())
     return render_template('huawei_conf.html', original=original)
+
+
+@app.route('/filter_conf', methods=['POST', 'GET'])
+def filter_conf():
+    original = []
+    content = request.form.get('content')
+    with open(FILTER_KEYWORDS_DIRECTORY, 'r', encoding='utf-8') as f:
+        for line in f.readlines():
+            original.append(line.lstrip())
+
+    if request.method == 'POST' and len(content) != 0:
+        original = []
+        with open(FILTER_KEYWORDS_DIRECTORY, 'w', encoding='utf-8') as f:
+            f.write(content)
+        with open(FILTER_KEYWORDS_DIRECTORY, 'r', encoding='utf-8') as f:
+            for line in f.readlines():
+                original.append(line.lstrip())
+    return render_template('filter_conf.html', original=original)
 
 
 @app.route('/sticker', methods=['POST', 'GET'])

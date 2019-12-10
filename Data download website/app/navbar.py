@@ -19,6 +19,7 @@ nav.register_element('top',
                                   View('instagram', 'ins_conf'),
                                   View('douyin', 'douyin_conf'),
                                   View('apple', 'apple_conf'),
+                                  View('filter keywords', 'filter_conf'),
                                   # View('huawei', 'huawei_conf')
 
                                   )
