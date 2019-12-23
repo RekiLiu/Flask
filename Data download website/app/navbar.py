@@ -11,6 +11,7 @@ nav.register_element('top',
                          View('Instagram', 'ins'),
                          # View('Instagramv2', 'insv2'),
                          View('Douyin','douyin'),
+                         View('Xiaohongshu','xhs'),
                          View('AppleStore', 'apple'),
                          View('HuaweiStore', 'huawei'),
                          View('Sticker', 'sticker'),
@@ -21,6 +22,5 @@ nav.register_element('top',
                                   View('apple', 'apple_conf'),
                                   View('filter keywords', 'filter_conf'),
                                   # View('huawei', 'huawei_conf')
-
                                   )
                      ))

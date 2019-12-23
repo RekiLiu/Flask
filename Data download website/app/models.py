@@ -1,4 +1,6 @@
 from app import mysql
+
+
 class Ins(mysql.Model):
     __tablename__ = 'ins'
     post_id = mysql.Column(mysql.String(191), primary_key=True)
@@ -63,15 +65,18 @@ class Ins(mysql.Model):
         hashtag = str(self.hashtag)
 
         return '<%s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s>' % (
-            post_id,post_url,keywords,type,is_ad,is_video,video_duration,user_id,user_name,user_fullname,user_biography,
-            user_following,user_followed_by,post_link,img_description,cover_height,cover_width,cover_link,img_links,
-            video_link,content,machine_translation_language,machine_translation_content,liked_count,comment_count,
-            video_view_count,pub_time,at,hashtag)
+            post_id, post_url, keywords, type, is_ad, is_video, video_duration, user_id, user_name, user_fullname,
+            user_biography,
+            user_following, user_followed_by, post_link, img_description, cover_height, cover_width, cover_link,
+            img_links,
+            video_link, content, machine_translation_language, machine_translation_content, liked_count, comment_count,
+            video_view_count, pub_time, at, hashtag)
+
 
 class Sticker(mysql.Model):
     __tablename__ = 'sticker'
     category_id = mysql.Column(mysql.Integer())
-    sticker_id = mysql.Column(mysql.Integer(),primary_key = True)
+    sticker_id = mysql.Column(mysql.Integer(), primary_key=True)
     category_name = mysql.Column(mysql.String(191))
     sticker_name = mysql.Column(mysql.String(191))
     sticker_thumbnail = mysql.Column(mysql.String(191))
@@ -82,7 +87,8 @@ class Sticker(mysql.Model):
         category_name = str(self.category_name)
         sticker_name = str(self.sticker_name)
         sticker_thumbnail = str(self.sticker_thumbnail)
-        return '<%s %s %s %s %s>' % (category_id,sticker_id,category_name,sticker_name,sticker_thumbnail)
+        return '<%s %s %s %s %s>' % (category_id, sticker_id, category_name, sticker_name, sticker_thumbnail)
+
 
 class Post(mysql.Model):
     __tablename__ = 'post'
@@ -181,7 +187,7 @@ class Applestore(mysql.Model):
         comment_count = str(self.comment_count)
         download_count = str(self.download_count)
 
-        return '<%s %s %s %s %s %s %s>' % (time, app_name, rank,total_rank, rating, comment_count, download_count)
+        return '<%s %s %s %s %s %s %s>' % (time, app_name, rank, total_rank, rating, comment_count, download_count)
 
 
 class Appledetails(mysql.Model):
@@ -208,7 +214,8 @@ class Appledetails(mysql.Model):
         app_link = str(self.app_link)
 
         return '<%s %s %s %s %s %s %s %s %s>' % (
-            app_name,apple_id, publish_date, last_release_date,category, subtitle, company_name, company_link, app_link)
+            app_name, apple_id, publish_date, last_release_date, category, subtitle, company_name, company_link,
+            app_link)
 
 
 class Huaweistore(mysql.Model):
@@ -253,6 +260,7 @@ class Huaweidetails(mysql.Model):
         return '<%s %s %s %s %s %s %s>' % (
             app_name, publish_date, category, subtitle, company_name, company_link, app_link)
 
+
 class Douyin(mysql.Model):
     __tablename__ = 'douyin'
     aweme_id = mysql.Column(mysql.String(191), primary_key=True)
@@ -277,4 +285,44 @@ class Douyin(mysql.Model):
         is_commerce = str(self.is_commerce)
 
         return '<%s %s %s %s %s %s %s %s %s>' % (
-            aweme_id, keywords, hashtag, video_url, video_link, cover_url, cover_link,pub_time,is_commerce)
+            aweme_id, keywords, hashtag, video_url, video_link, cover_url, cover_link, pub_time, is_commerce)
+
+
+class Xiaohongshu(mysql.Model):
+    __tablename__ = 'xhs'
+    id = mysql.Column(mysql.String(191), primary_key=True)
+    keywords = mysql.Column(mysql.String(191))
+    title = mysql.Column(mysql.String(191))
+    type = mysql.Column(mysql.String(191))
+    is_ads = mysql.Column(mysql.Integer())
+    liked = mysql.Column(mysql.Integer())
+    liked_count = mysql.Column(mysql.Integer())
+    description = mysql.Column(mysql.Text)
+    post_url = mysql.Column(mysql.String(191))
+    img_links = mysql.Column(mysql.Text)
+    img_num = mysql.Column(mysql.Integer())
+    user_nickname = mysql.Column(mysql.String(191))
+    user_id = mysql.Column(mysql.String(191))
+    insert_time = mysql.Column(mysql.String(191))
+    pub_time = mysql.Column(mysql.String(191))
+
+    def __repr__(self):
+        id = str(self.id)
+        keywords = str(self.keywords)
+        title = str(self.title)
+        type = str(self.type)
+        is_ads = str(self.is_ads)
+        liked = str(self.liked)
+        liked_count = str(self.liked_count)
+        description = str(self.description)
+        post_url = str(self.post_url)
+        img_links = str(self.img_links)
+        img_num = str(self.img_num)
+        user_nickname = str(self.user_nickname)
+        user_id = str(self.user_id)
+        insert_time = str(self.insert_time)
+        pubtime = str(self.pub_time)
+
+        return '<%s %s %s %s %s %s %s %s %s %s %s %s %s %s>' % (
+            id, keywords, title, is_ads, liked, liked_count, description, post_url, img_links, img_num, user_nickname,
+            user_id, insert_time, pubtime)

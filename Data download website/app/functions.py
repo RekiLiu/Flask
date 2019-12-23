@@ -123,6 +123,12 @@ def get_df_mysql(data,platform):
                             d.pub_time, d.is_commerce) for d in data],
                           columns=['aweme_id','keywords','hashtag','video_url','video_link','cover_url','cover_link',
                                    'pub_time','is_commerce'])
+
+    elif platform == 'xhs':
+        df = pd.DataFrame([(d.pub_time,d.keywords,d.id,d.title,d.type,d.is_ads,d.liked,d.liked_count,d.description,d.post_url,
+                            d.img_links,d.img_num,d.user_nickname,d.user_id,d.insert_time) for d in data],
+                          columns=['pub_time','keywords','id','title','type','is_ads','liked','liked_count','description',
+                                   'post_url','img_links','img_num','user_nickname','user_id','insert_time'])
     else:
         df = None
     return df
@@ -237,6 +243,10 @@ def get_douyin_dic():
 def get_douyin_keywords(key):
     SUMMARY_DICT = get_douyin_dic()
     return SUMMARY_DICT[key]
+
+def get_xhs_keywords():
+    original = ['b612', '轻颜', 'zepeto', 'faceu']
+    return original
 
 
 def get_apple_keywords():
