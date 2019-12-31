@@ -326,3 +326,62 @@ class Xiaohongshu(mysql.Model):
         return '<%s %s %s %s %s %s %s %s %s %s %s %s %s %s>' % (
             id, keywords, title, is_ads, liked, liked_count, description, post_url, img_links, img_num, user_nickname,
             user_id, insert_time, pubtime)
+
+class CommentsApple(mysql.Model):
+    __tablename__ = 'comments_apple_qimai'
+    id = mysql.Column(mysql.String(191), primary_key=True)
+    app_name = mysql.Column(mysql.String(191))
+    app_id = mysql.Column(mysql.String(191))
+    version = mysql.Column(mysql.String(191))
+    pub_time = mysql.Column(mysql.String(191))
+    user_name = mysql.Column(mysql.String(191))
+    rating = mysql.Column(mysql.String(191))
+    title = mysql.Column(mysql.String(191))
+    content = mysql.Column(mysql.Text)
+    is_deleted = mysql.Column(mysql.String(191))
+
+
+    def __repr__(self):
+        id = str(self.id)
+        app_name = str(self.app_name)
+        app_id = str(self.app_id)
+        version = str(self.version)
+        pub_time = str(self.pub_time)
+        user_name = str(self.user_name)
+        rating = str(self.rating)
+        title = str(self.title)
+        content = str(self.content)
+        is_deleted = str(self.is_deleted)
+
+
+        return '<%s %s %s %s %s %s %s %s %s %s>' % (
+            id,app_name,app_id,version,pub_time,rating,title,content,is_deleted)
+
+
+class CommentsHuawei(mysql.Model):
+    __tablename__ = 'comments_huawei'
+    id = mysql.Column(mysql.String(191), primary_key=True)
+    app_name = mysql.Column(mysql.String(191))
+    version = mysql.Column(mysql.String(191))
+    rating = mysql.Column(mysql.String(191))
+    stars = mysql.Column(mysql.String(191))
+    pub_time = mysql.Column(mysql.String(191))
+    content = mysql.Column(mysql.Text)
+    user_name = mysql.Column(mysql.String(191))
+    vote_count = mysql.Column(mysql.String(191))
+    app_id = mysql.Column(mysql.String(191), primary_key=True)
+
+    def __repr__(self):
+        id = str(self.id)
+        app_name = str(self.app_name)
+        version = str(self.version)
+        rating = str(self.rating)
+        stars = str(self.updated)
+        pub_time = str(self.title)
+        content = str(self.content)
+        user_name = str(self.vote_sum)
+        vote_count = str(self.vote_count)
+        app_id = str(self.app_id)
+
+        return '<%s %s %s %s %s %s %s %s %s %s>' % (
+            id,app_name,version,rating,stars,pub_time,content,user_name,vote_count,app_id)

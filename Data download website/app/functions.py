@@ -129,6 +129,14 @@ def get_df_mysql(data,platform):
                             d.img_links,d.img_num,d.user_nickname,d.user_id,d.insert_time) for d in data],
                           columns=['pub_time','keywords','id','title','type','is_ads','liked','liked_count','description',
                                    'post_url','img_links','img_num','user_nickname','user_id','insert_time'])
+
+    elif platform == 'comments_apple':
+        df = pd.DataFrame([(d.pub_time,d.app_name,d.id,d.version,d.rating,d.title,d.content,d.user_name,d.is_deleted,d.app_id) for d in data],
+                          columns=['pubtime','app_name','id','version','rating','title','content','user_name','is_deleted','app_id'])
+
+    elif platform == 'comments_huawei':
+        df = pd.DataFrame([(d.pub_time,d.app_name,d.id,d.version,d.rating,d.stars,d.content,d.user_name,d.vote_count,d.app_id) for d in data],
+                          columns=['pub_time','app_name','id','version','rating','stars','content','user_name','vote_count','app_id'])
     else:
         df = None
     return df
@@ -214,7 +222,6 @@ def get_ins_dic():
         'soda（水柚）': [i for i in original if 'soda' in i],
         'zepeto（崽崽）': [i for i in original if 'zepeto' in i]
     }
-    print(SUMMARY_DICT)
     return SUMMARY_DICT
 
 
@@ -228,8 +235,6 @@ def get_douyin_dic():
     with open(DOUYIN_KEYWORDS_DIRECTORY, 'r', encoding='utf-8') as f:
         for line in f.readlines():
             original.append(line.strip().split(' id:')[0])
-    print(original)
-
     SUMMARY_DICT = {
         'b612': [i for i in original if 'b612' in i],
         'ulike（轻颜）': [i for i in original if '轻颜相机' in i],
@@ -237,7 +242,6 @@ def get_douyin_dic():
         'wuta（无他）': [i for i in original if '无他相机' in i],
         'zepeto（崽崽）': [i for i in original if 'zepeto' in i]
     }
-    print(SUMMARY_DICT)
     return SUMMARY_DICT
 
 def get_douyin_keywords(key):
@@ -246,6 +250,10 @@ def get_douyin_keywords(key):
 
 def get_xhs_keywords():
     original = ['b612', '轻颜', 'zepeto', 'faceu']
+    return original
+
+def get_comment_keywords():
+    original = ['B612咔叽','一甜相机','崽崽Zepeto','Faceu激萌','美颜相机','轻颜相机']
     return original
 
 

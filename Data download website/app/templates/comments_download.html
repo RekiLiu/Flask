@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="span12">
+            <div class="page-header">
+                <h1>
+                    <em>Data Analysis</em> <em>
+                    <small>Download comment data</small>
+                </em>
+                </h1>
+            </div>
+        </div>
+    </div>
+    <div class="row-fluid">
+        <div class="span12">
+            {% if user_selections %}
+            <h3>
+                <em>Select Keywords：</em>
+                {% for user_selection in user_selections %}
+                <span class="label label-info">{{user_selection}}</span>
+                {% endfor %}
+            </h3>
+            {% endif %}
+        </div>
+    </div>
+    <div class="row-fluid">
+        <div class="span12">
+            {% if start_date %}
+            <h3>
+                <em>Start Date：</em>
+                <span class="label label-info">{{start_date}}</span>
+            </h3>
+            {% endif %}
+            {% if end_date %}
+            <h3>
+                <em>End Date：</em>
+                <span class="label label-info">{{end_date}}</span>
+            </h3>
+            {% endif %}
+        </div>
+    </div>
+    <div class="row-fluid">
+        <div class="span12">
+            <h3>
+                <em>Click Button：</em>
+            </h3>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-2  top-buffer">
+            <a href="{{url_for('download_comments_apple_data',start_date = start_date,end_date= end_date, user_selections = user_selections)}}">
+                <button class="btn btn-default">Download Apple Comments</button>
+            </a>
+        </div>
+        <div class="col-sm-2  top-buffer">
+            <a href="{{url_for('download_comments_huawei_data',start_date = start_date,end_date= end_date, user_selections = user_selections)}}">
+                <button class="btn btn-default">Download Huawei Comments</button>
+            </a>
+        </div>
+    </div>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script type="text/javascript">
+</script>
+{% endblock %}

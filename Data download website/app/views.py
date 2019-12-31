@@ -9,9 +9,7 @@ importlib.reload(sys)
 from app import app
 from app import mongo, mysql, functions, models
 from config import FILE_DIRECTORY as file_dir
-from config import WEIBO_KEYWORDS_DIRECTORY, INS_KEYWORDS_DIRECTORY, APPLE_KEYWORDS_DIRECTORY, \
-    HUAWEI_KEYWORDS_DIRECTORY, \
-    AMUSE_KEYWORDS_DIRECTORY, MAKEUP_KEYWORDS_DIRECTORY, DOUYIN_KEYWORDS_DIRECTORY, FILTER_KEYWORDS_DIRECTORY
+from config import *
 from flask import render_template, redirect, url_for, request, send_from_directory
 from sqlalchemy import and_, or_, distinct
 
@@ -335,6 +333,70 @@ def download_xhsdata():
         data = mysql.session.query(models.Xiaohongshu).filter(days_rule, hashtag_rule, isnone_rule, unwanted_desc_rule,
                                                               unwanted_user_rule,unwanted_title_rule).all()
         my_data_writer = functions.multi2excel_mysql(data_writer, data, user_selection, platform='xhs')
+    functions.close_writer(my_data_writer)
+    if len(data_file_name) != 0 and len(user_selections) != 0:
+        return send_from_directory(file_dir, data_file_name, as_attachment=True)
+    else:
+        return render_template('404.html'), 404
+
+@app.route('/comments', methods=['POST', 'GET'])
+def comments():
+    keywords = functions.get_comment_keywords()
+    last_sunday = functions.get_last_sunday()
+    last_monday = functions.get_last_monday()
+    return render_template("comments_db.html", keywords=keywords, last_monday=last_monday, last_sunday=last_sunday)
+
+
+@app.route('/comments_data', methods=['POST', 'GET'])
+def comments_data():
+    if request.method == 'POST':
+        user_selections = request.values.getlist('user_selection')
+        start_date = request.form.get('start_date')
+        end_date = request.form.get('end_date')
+        return render_template("comments_download.html", user_selections=user_selections, start_date=start_date,
+                               end_date=end_date)
+
+
+@app.route('/download_comments_apple_data', methods=['POST', 'GET'])
+def download_comments_apple_data():
+    start_date = request.args.get('start_date')
+    end_date = request.args.get('end_date')
+    days_list = functions.get_dayslist(start_date, end_date)
+    user_selections = request.args.getlist('user_selections')
+    data_file_name = functions.get_file_name(start_date, end_date, 'comments_apple', 'data')
+    file_path = functions.get_dir(data_file_name)
+    my_data_writer = None
+    data_writer = functions.create_writer(file_path, options={'strings_to_urls': False})
+    for user_selection in user_selections:
+        days_rule = or_(*[models.CommentsApple.pub_time.like('%' + d + '%') for d in days_list])
+        hashtag_rule = or_(
+            *[models.CommentsApple.app_name.like('%' + user_selection + '%')])
+        isnone_rule = models.CommentsApple.pub_time.isnot(None)
+        data = mysql.session.query(models.CommentsApple).filter(days_rule, hashtag_rule, isnone_rule).all()
+        my_data_writer = functions.multi2excel_mysql(data_writer, data, user_selection, platform='comments_apple')
+    functions.close_writer(my_data_writer)
+    if len(data_file_name) != 0 and len(user_selections) != 0:
+        return send_from_directory(file_dir, data_file_name, as_attachment=True)
+    else:
+        return render_template('404.html'), 404
+
+@app.route('/download_comments_huawei_data', methods=['POST', 'GET'])
+def download_comments_huawei_data():
+    start_date = request.args.get('start_date')
+    end_date = request.args.get('end_date')
+    days_list = functions.get_dayslist(start_date, end_date)
+    user_selections = request.args.getlist('user_selections')
+    data_file_name = functions.get_file_name(start_date, end_date, 'comments_huawei', 'data')
+    file_path = functions.get_dir(data_file_name)
+    my_data_writer = None
+    data_writer = functions.create_writer(file_path, options={'strings_to_urls': False})
+    for user_selection in user_selections:
+        days_rule = or_(*[models.CommentsHuawei.pub_time.like('%' + d + '%') for d in days_list])
+        hashtag_rule = or_(
+            *[models.CommentsHuawei.app_name.like('%' + user_selection + '%')])
+        isnone_rule = models.CommentsHuawei.pub_time.isnot(None)
+        data = mysql.session.query(models.CommentsHuawei).filter(days_rule, hashtag_rule, isnone_rule).all()
+        my_data_writer = functions.multi2excel_mysql(data_writer, data, user_selection, platform='comments_huawei')
     functions.close_writer(my_data_writer)
     if len(data_file_name) != 0 and len(user_selections) != 0:
         return send_from_directory(file_dir, data_file_name, as_attachment=True)
